@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Ahmed",
+    "age": 24,
+    "isMarried": true,
+    "children": ["Moustfa", "Aliaa"]
+  },
+  { "name": "Ali", "age": 26, "isMarried": false },
+  { "name": "Andrew", "age": 28 }
+]
