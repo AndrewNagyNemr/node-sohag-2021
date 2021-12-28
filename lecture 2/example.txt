@@ -1,0 +1,7 @@
+NPM
+
+// npm init => create package.json file
+// npm i fs-extra 
+
+-download => fs extra
+-download => dependencies
