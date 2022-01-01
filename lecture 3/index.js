@@ -1,15 +1,22 @@
+require("express-async-errors");
 const mongoose = require("mongoose");
 const express = require("express");
 const userRouter = require("./Routes/user");
-const { logger, auth } = require("./middleware");
+const { logger } = require("./middleware");
 
 const app = express();
 
 //Middleware
-app.use(express.json());
+app.use(express.json()); // parse text from http request body => assign on req.body
 app.use(logger);
 // app.use(auth);
 app.use("/users", userRouter);
+
+app.use((err, req, res, next) => {
+
+    // server logs
+    res.status(500).json({ message: err.message })
+})
 
 mongoose
     .connect("mongodb://localhost:27017/mydb")
@@ -22,4 +29,3 @@ mongoose
     .catch(() => {
         console.log("error connecting to mongodb");
     });
-

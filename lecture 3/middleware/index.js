@@ -11,4 +11,14 @@ const auth = (req, res, next) => {
     else res.status(401).json({ msg: "failed authentication" })
 }
 
-module.exports = { logger, auth }
+const catchAsyncErrors = (handler) => {
+    return async (req, res, next) => {
+        try {
+            await handler()
+        } catch (error) {
+            next(error)
+        }
+    }
+}
+
+module.exports = { logger, auth, catchAsyncErrors }
