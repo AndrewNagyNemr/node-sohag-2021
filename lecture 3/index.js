@@ -1,7 +1,9 @@
+require("dotenv").config({ path: `${process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : ".env"}` })
 require("express-async-errors");
 const mongoose = require("mongoose");
 const express = require("express");
 const userRouter = require("./Routes/user");
+const authRouter = require("./Routes/auth");
 const { logger } = require("./middleware");
 
 const app = express();
@@ -11,6 +13,7 @@ app.use(express.json()); // parse text from http request body => assign on req.b
 app.use(logger);
 // app.use(auth);
 app.use("/users", userRouter);
+app.use("/auth", authRouter);
 
 app.use((err, req, res, next) => {
 
@@ -19,7 +22,7 @@ app.use((err, req, res, next) => {
 })
 
 mongoose
-    .connect("mongodb://localhost:27017/mydb")
+    .connect(process.env.DB_URL)
     .then(() => {
         app.listen(3000, () => {
             console.log("server running on port 3000");

@@ -1,6 +1,8 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const { User, validateUser } = require("../models/user");
-const { catchAsyncErrors } = require("../middleware")
+const { catchAsyncErrors } = require("../middleware");
+// const _ = require("lodash");
 
 const router = express.Router();
 
@@ -40,9 +42,17 @@ router.put("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     const { error } = validateUser(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message })
-    const newUser = new User(req.body);
+    const user = await User.findOne({ email: req.body.email })
+    if (user) return res.status(400).json({ message: "user already registered" });
+    const password = await bcrypt.hash(req.body.password, 10)
+    const newUser = new User({ ...req.body, password });
     await newUser.save();
-    res.json(newUser);
+    res.json({
+        name : newUser.name,
+        email : newUser.email,
+        _id : newUser._id
+    });
+    // res.json(_.omit(newUser, ["password"]))
 });
 
 module.exports = router;
