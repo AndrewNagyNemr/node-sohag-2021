@@ -2,8 +2,8 @@ require("dotenv").config({ path: `${process.env.NODE_ENV ? `.env.${process.env.N
 require("express-async-errors");
 const mongoose = require("mongoose");
 const express = require("express");
-const userRouter = require("./Routes/user");
-const authRouter = require("./Routes/auth");
+const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
 const { logger } = require("./middleware");
 
 const app = express();
@@ -11,12 +11,13 @@ const app = express();
 //Middleware
 app.use(express.json()); // parse text from http request body => assign on req.body
 app.use(logger);
-// app.use(auth);
+
+//Routes
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
+// express error handling middleware
 app.use((err, req, res, next) => {
-
     // server logs
     res.status(500).json({ message: err.message })
 })

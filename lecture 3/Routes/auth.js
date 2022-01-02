@@ -2,6 +2,7 @@ const express = require("express");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
 const Joi = require("joi")
+const jwt = require("jsonwebtoken");
 
 const validate = (auth) => {
     const schema = Joi.object({
@@ -23,7 +24,8 @@ router.post("/", async (req, res) => {
     const isValidPassword = await bcrypt.compare(req.body.password, user.password)
     if (!isValidPassword) return res.status(401).json({ message: "email or password is incorrect" });
 
-    res.json(true)
+    const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET)
+    res.json({ token })
 })
 
 module.exports = router

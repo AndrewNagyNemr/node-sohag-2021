@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { User, validateUser } = require("../models/user");
-const { catchAsyncErrors } = require("../middleware");
+const { catchAsyncErrors, auth } = require("../middleware");
 // const _ = require("lodash");
 
 const router = express.Router();
@@ -18,14 +18,15 @@ router.get("/:id", async (req, res) => {
     res.json(user);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     const { id } = req.params;
     //=> if user not present send 404
     const user = await User.findByIdAndDelete(id);
     res.json(user);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
+    // req.user.isAdmin
     const { error } = validateUser(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message })
     const { id } = req.params;
@@ -48,9 +49,9 @@ router.post("/", async (req, res) => {
     const newUser = new User({ ...req.body, password });
     await newUser.save();
     res.json({
-        name : newUser.name,
-        email : newUser.email,
-        _id : newUser._id
+        name: newUser.name,
+        email: newUser.email,
+        _id: newUser._id
     });
     // res.json(_.omit(newUser, ["password"]))
 });
